@@ -1,4 +1,17 @@
-import { Plus, MoreHorizontal, Scissors, Clock } from "lucide-react";
+"use client";
+
+import { useEffect, useState } from "react";
+// O Clock foi removido daqui
+import {
+  MoreHorizontal,
+  Scissors,
+  Loader2,
+  Pencil,
+  Trash2,
+} from "lucide-react";
+import { supabase } from "@/lib/supabase";
+import { toast } from "sonner";
+
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -16,125 +29,186 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
-const servicos = [
-  {
-    id: 1,
-    nome: "Corte Degradê",
-    categoria: "Cabelo",
-    preco: "R$ 50,00",
-    tempo: "45 min",
-    status: "Ativo",
-  },
-  {
-    id: 2,
-    nome: "Barba Terapia",
-    categoria: "Barba",
-    preco: "R$ 40,00",
-    tempo: "30 min",
-    status: "Ativo",
-  },
-  {
-    id: 3,
-    nome: "Combo Premium",
-    categoria: "Combo",
-    preco: "R$ 80,00",
-    tempo: "1h 15min",
-    status: "Inativo",
-  },
-];
+import { CreateServiceDialog } from "@/components/create-service-dialog";
+import { UpdateServiceDialog } from "@/components/update-service-dialog";
+
+interface Servico {
+  id: string;
+  nome: string;
+  categoria: string;
+  preco: string;
+  tempo: string;
+  status: string;
+}
 
 export default function ServicosPage() {
+  const [servicos, setServicos] = useState<Servico[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  // Estados para Modais
+  const [serviceToEdit, setServiceToEdit] = useState<Servico | null>(null);
+  const [serviceToDelete, setServiceToDelete] = useState<Servico | null>(null);
+  const [isEditOpen, setIsEditOpen] = useState(false);
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+
+  async function fetchServicos() {
+    try {
+      setLoading(true);
+      const { data, error } = await supabase
+        .from("servicos")
+        .select("*")
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      setServicos(data || []);
+    } catch (error) {
+      console.error(error); // O error agora é utilizado pelo console.error
+      toast.error("Erro ao carregar serviços.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function handleDelete() {
+    if (!serviceToDelete) return;
+    const toastId = toast.loading("Excluindo...");
+
+    const { error } = await supabase
+      .from("servicos")
+      .delete()
+      .eq("id", serviceToDelete.id);
+
+    if (error) {
+      console.error(error);
+      toast.error("Erro ao excluir.", { id: toastId });
+    } else {
+      toast.success("Serviço removido!", { id: toastId });
+      fetchServicos();
+    }
+    setIsDeleteOpen(false);
+  }
+
+  useEffect(() => {
+    fetchServicos();
+  }, []);
+
   return (
     <div className="flex flex-col gap-6">
-      {/* Cabeçalho da Página */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="p-2 bg-zinc-100 rounded-lg">
-            <Scissors className="size-5 text-zinc-700" />
+            <Scissors className="size-5" />
           </div>
           <div>
             <h2 className="text-2xl font-bold tracking-tight">Serviços</h2>
-            <p className="text-zinc-500">
-              Gerencie o cardápio e preços da sua barbearia.
+            <p className="text-sm text-zinc-500">
+              Gerencie o cardápio da sua barbearia.
             </p>
           </div>
         </div>
-        <Button className="gap-2">
-          <Plus className="size-4" /> Novo Serviço
-        </Button>
+        <CreateServiceDialog onServiceCreated={fetchServicos} />
       </div>
 
-      {/* Tabela de Serviços */}
-      <div className="rounded-md border bg-white shadow-sm">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Serviço</TableHead>
-              <TableHead>Categoria</TableHead>
-              <TableHead>
-                <div className="flex items-center gap-2">
-                  <Clock className="size-4 text-zinc-500" />
-                  <span>Tempo</span>
-                </div>
-              </TableHead>
-              <TableHead>Preço</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead className="w-[80px]"></TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {servicos.map((servico) => (
-              <TableRow key={servico.id} className="hover:bg-zinc-50/50">
-                <TableCell className="font-medium text-zinc-900">
-                  {servico.nome}
-                </TableCell>
-                <TableCell>
-                  <Badge variant="outline" className="font-normal">
-                    {servico.categoria}
-                  </Badge>
-                </TableCell>
-                <TableCell className="text-zinc-600">{servico.tempo}</TableCell>
-                <TableCell className="font-semibold text-zinc-900">
-                  {servico.preco}
-                </TableCell>
-                <TableCell>
-                  <Badge
-                    variant={
-                      servico.status === "Ativo" ? "default" : "secondary"
-                    }
-                    className={
-                      servico.status === "Ativo"
-                        ? "bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-50"
-                        : ""
-                    }
-                  >
-                    {servico.status}
-                  </Badge>
-                </TableCell>
-                <TableCell>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" className="h-8 w-8 p-0">
-                        <MoreHorizontal className="h-4 w-4 text-zinc-500" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-40">
-                      <DropdownMenuLabel>Ações</DropdownMenuLabel>
-                      <DropdownMenuItem className="cursor-pointer">
-                        Editar
-                      </DropdownMenuItem>
-                      <DropdownMenuItem className="text-red-600 cursor-pointer">
-                        Excluir
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </TableCell>
+      <div className="rounded-md border bg-white shadow-sm overflow-hidden">
+        {loading ? (
+          <div className="flex flex-col items-center py-20 gap-2">
+            <Loader2 className="animate-spin text-zinc-400" />
+          </div>
+        ) : (
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Serviço</TableHead>
+                <TableHead>Categoria</TableHead>
+                <TableHead className="hidden md:table-cell">Tempo</TableHead>
+                <TableHead>Preço</TableHead>
+                <TableHead className="w-20"></TableHead>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+            </TableHeader>
+            <TableBody>
+              {servicos.map((s) => (
+                <TableRow key={s.id}>
+                  <TableCell className="font-medium">{s.nome}</TableCell>
+                  <TableCell>
+                    <Badge variant="outline">{s.categoria}</Badge>
+                  </TableCell>
+                  <TableCell className="hidden md:table-cell">
+                    {s.tempo} min
+                  </TableCell>
+                  <TableCell>R$ {s.preco}</TableCell>
+                  <TableCell>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon">
+                          <MoreHorizontal className="size-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuLabel>Ações</DropdownMenuLabel>
+                        <DropdownMenuItem
+                          onClick={() => {
+                            setServiceToEdit(s);
+                            setIsEditOpen(true);
+                          }}
+                        >
+                          <Pencil className="mr-2 size-4" /> Editar
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          className="text-red-600"
+                          onClick={() => {
+                            setServiceToDelete(s);
+                            setIsDeleteOpen(true);
+                          }}
+                        >
+                          <Trash2 className="mr-2 size-4" /> Excluir
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        )}
       </div>
+
+      <UpdateServiceDialog
+        servico={serviceToEdit}
+        open={isEditOpen}
+        onOpenChange={setIsEditOpen}
+        onServiceUpdated={fetchServicos}
+      />
+
+      <AlertDialog open={isDeleteOpen} onOpenChange={setIsDeleteOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Tem certeza?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Esta ação não pode ser desfeita. O serviço{" "}
+              <b>{serviceToDelete?.nome}</b> será removido permanentemente.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDelete}
+              className="bg-red-600 hover:bg-red-700 text-white"
+            >
+              Confirmar Exclusão
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

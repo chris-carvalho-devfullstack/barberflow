@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
+// Import do Toaster (Sonner) para as notificações
+import { Toaster } from "@/components/ui/sonner";
+
 import {
   SidebarProvider,
   SidebarTrigger,
@@ -37,9 +40,14 @@ export default function RootLayout({
               <Separator orientation="vertical" className="mr-2 h-4" />
               <h1 className="text-sm font-medium">Painel Administrativo</h1>
             </header>
+
+            {/* Aqui é onde as páginas (como a de Serviços) são renderizadas */}
             <div className="p-6">{children}</div>
           </SidebarInset>
         </SidebarProvider>
+
+        {/* O Toaster fica no final do body para sobrepor todo o sistema */}
+        <Toaster position="top-right" richColors />
       </body>
     </html>
   );
