@@ -27,10 +27,10 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 
 const items = [
   { title: "Dashboard", url: "/", icon: LayoutDashboard },
-  { title: "Agenda", url: "#", icon: Calendar },
+  { title: "Agenda", url: "/agendamentos", icon: Calendar },
   { title: "Serviços", url: "/servicos", icon: Scissors },
   { title: "Produtos", url: "#", icon: Package },
-  { title: "Clientes (CRM)", url: "#", icon: Users },
+  { title: "Clientes (CRM)", url: "/clientes", icon: Users },
   { title: "Fluxo de Caixa", url: "#", icon: DollarSign },
   { title: "Configurações", url: "#", icon: Settings },
 ];

@@ -95,7 +95,7 @@ export function CreateServiceDialog({
         </Button>
       </DialogTrigger>
 
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Adicionar Serviço</DialogTitle>
           <DialogDescription>

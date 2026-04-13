@@ -1,9 +1,9 @@
-import type { Metadata } from "next";
+"use client";
+
+import { Toaster } from "@/components/ui/sonner";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-
-// Import do Toaster (Sonner) para as notificações
-import { Toaster } from "@/components/ui/sonner";
+import { usePathname } from "next/navigation";
 
 import {
   SidebarProvider,
@@ -19,34 +19,39 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: "BarberFlow | CRM Gestão",
-  description: "O mais moderno sistema para barbearias",
-};
-
 export default function RootLayout({
   children,
-}: Readonly<{ children: React.ReactNode }>): React.ReactNode {
+}: Readonly<{ children: React.ReactNode }>) {
+  const pathname = usePathname();
+
+  // Define as rotas que NÃO devem exibir a Sidebar (Login, Cadastro, etc)
+  const isPublicRoute =
+    pathname === "/login" ||
+    pathname === "/cadastro" ||
+    pathname.startsWith("/auth");
+
   return (
     <html lang="pt-BR">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <SidebarProvider>
-          <AppSidebar />
-          <SidebarInset>
-            <header className="flex h-14 shrink-0 items-center gap-2 border-b px-4">
-              <SidebarTrigger className="-ml-1" />
-              <Separator orientation="vertical" className="mr-2 h-4" />
-              <h1 className="text-sm font-medium">Painel Administrativo</h1>
-            </header>
-
-            {/* Aqui é onde as páginas (como a de Serviços) são renderizadas */}
-            <div className="p-6">{children}</div>
-          </SidebarInset>
-        </SidebarProvider>
-
-        {/* O Toaster fica no final do body para sobrepor todo o sistema */}
+        {isPublicRoute ? (
+          // Layout limpo para Login/Cadastro
+          <main>{children}</main>
+        ) : (
+          // Layout com Sidebar para o Painel Administrativo
+          <SidebarProvider>
+            <AppSidebar />
+            <SidebarInset>
+              <header className="flex h-14 shrink-0 items-center gap-2 border-b px-4">
+                <SidebarTrigger className="-ml-1" />
+                <Separator orientation="vertical" className="mr-2 h-4" />
+                <h1 className="text-sm font-medium">Painel Administrativo</h1>
+              </header>
+              <div className="p-6">{children}</div>
+            </SidebarInset>
+          </SidebarProvider>
+        )}
         <Toaster position="top-right" richColors />
       </body>
     </html>
