@@ -1,9 +1,12 @@
 import type { NextConfig } from "next";
 import path from "path";
 
+const monorepoRoot = path.resolve(__dirname, "../..");
+
 const nextConfig: NextConfig = {
+  outputFileTracingRoot: monorepoRoot,
   turbopack: {
-    root: path.resolve(__dirname, "../.."), // aponta para a raiz do monorepo
+    root: monorepoRoot,
   },
   images: {
     remotePatterns: [
