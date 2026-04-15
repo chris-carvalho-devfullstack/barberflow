@@ -4,10 +4,10 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "next build && (cp -r .next/standalone/apps/panel/. .next/standalone/ || true)",
     "start": "next start",
     "lint": "eslint",
-    "worker:build": "next build && cp -r .next/standalone/apps/panel/. .next/standalone/ && npx @opennextjs/cloudflare build --no-build"
+    "worker:build": "npx @opennextjs/cloudflare build"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
