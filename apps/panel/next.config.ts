@@ -1,10 +1,10 @@
 import type { NextConfig } from "next";
+import path from "path";
 
 const nextConfig: NextConfig = {
   turbopack: {
-    root: __dirname,
+    root: path.resolve(__dirname, "../.."), // aponta para a raiz do monorepo
   },
-  // Configuração para permitir imagens externas (como a foto do Google)
   images: {
     remotePatterns: [
       {
@@ -14,7 +14,7 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
-        hostname: "*.googleusercontent.com", // Cobre outras variações de servidores do Google
+        hostname: "*.googleusercontent.com",
         pathname: "/**",
       },
     ],
