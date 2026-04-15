@@ -7,7 +7,7 @@
     "build": "next build && (cp -r .next/standalone/apps/panel/. .next/standalone/ || true)",
     "start": "next start",
     "lint": "eslint",
-    "worker:build": "npx @opennextjs/cloudflare build"
+    "worker:build": "npx @opennextjs/cloudflare build && mv .open-next/worker.js .open-next/assets/_worker.js"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
