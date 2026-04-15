@@ -1,38 +1,46 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-# Dependencies
-node_modules
+# dependencies
+node_modules/
 .pnp
-.pnp.js
+.pnp.*
 
-# Local env files
+# testing
+coverage/
+
+# next.js e build outputs
+.next/
+out/
+build/
+dist/
+next-env.d.ts
+
+# opennext e cloudflare (Muito importante para o seu painel)
+.open-next/
+.wrangler/
+
+# turbo
+.turbo/
+
+# vercel
+.vercel/
+
+# misc
+.DS_Store
+*.pem
+
+# debug logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# env files (nunca enviar senhas para o github)
 .env
-.env.local
+.env*.local
 .env.development.local
 .env.test.local
 .env.production.local
 
-# Testing
-coverage
-
-# Turbo
-.turbo
-
-# Vercel
-.vercel
-
-# Build Outputs
-.next/
-out/
-build
-dist
-
-
-# Debug
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# Misc
-.DS_Store
-*.pem
+# typescript
+*.tsbuildinfo
