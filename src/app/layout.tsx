@@ -1,5 +1,6 @@
 "use client";
 
+import { UserNav } from "@/components/user-nav";
 import { Toaster } from "@/components/ui/sonner";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
@@ -43,10 +44,14 @@ export default function RootLayout({
           <SidebarProvider>
             <AppSidebar />
             <SidebarInset>
-              <header className="flex h-14 shrink-0 items-center gap-2 border-b px-4">
-                <SidebarTrigger className="-ml-1" />
-                <Separator orientation="vertical" className="mr-2 h-4" />
-                <h1 className="text-sm font-medium">Painel Administrativo</h1>
+              <header className="flex h-14 shrink-0 items-center justify-between border-b px-4">
+                <div className="flex items-center gap-2">
+                  <SidebarTrigger className="-ml-1" />
+                  <Separator orientation="vertical" className="mr-2 h-4" />
+                  <h1 className="text-sm font-medium">Painel Administrativo</h1>
+                </div>
+                {/* Aqui entra o nosso novo menu de perfil */}
+                <UserNav />
               </header>
               <div className="p-6">{children}</div>
             </SidebarInset>

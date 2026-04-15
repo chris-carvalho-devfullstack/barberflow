@@ -40,6 +40,7 @@ export function DashboardChart() {
           accessibilityLayer
           data={chartData}
           margin={{
+            top: 24, // <-- Adicionado espaço extra no topo para a curva não cortar
             left: 12,
             right: 12,
           }}

@@ -1,13 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
-// O Clock foi removido daqui
 import {
   MoreHorizontal,
   Scissors,
   Loader2,
   Pencil,
   Trash2,
+  Eye, // <- Ícone do olho adicionado
 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { toast } from "sonner";
@@ -42,7 +42,10 @@ import {
 
 import { CreateServiceDialog } from "@/components/create-service-dialog";
 import { UpdateServiceDialog } from "@/components/update-service-dialog";
+// Import do novo modal de detalhes
+import { ServiceDetailsDialog } from "@/components/service-details-dialog";
 
+// Interface atualizada com código e fotos
 interface Servico {
   id: string;
   nome: string;
@@ -50,17 +53,31 @@ interface Servico {
   preco: string;
   tempo: string;
   status: string;
+  codigo?: string;
+  fotos?: string[];
 }
 
 export default function ServicosPage() {
   const [servicos, setServicos] = useState<Servico[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Estados para Modais
+  // Estados para Modais de Edição e Exclusão
   const [serviceToEdit, setServiceToEdit] = useState<Servico | null>(null);
   const [serviceToDelete, setServiceToDelete] = useState<Servico | null>(null);
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+
+  // Novos Estados para o Modal de Detalhes
+  const [servicoSelecionado, setServicoSelecionado] = useState<Servico | null>(
+    null,
+  );
+  const [isDetailsOpen, setIsDetailsOpen] = useState(false);
+
+  // Função auxiliar para abrir detalhes
+  const handleOpenDetails = (servico: Servico) => {
+    setServicoSelecionado(servico);
+    setIsDetailsOpen(true);
+  };
 
   async function fetchServicos() {
     try {
@@ -72,7 +89,7 @@ export default function ServicosPage() {
       if (error) throw error;
       setServicos(data || []);
     } catch (error) {
-      console.error(error); // O error agora é utilizado pelo console.error
+      console.error(error);
       toast.error("Erro ao carregar serviços.");
     } finally {
       setLoading(false);
@@ -128,17 +145,25 @@ export default function ServicosPage() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Serviço</TableHead>
-                <TableHead>Categoria</TableHead>
-                <TableHead className="hidden md:table-cell">Tempo</TableHead>
-                <TableHead>Preço</TableHead>
+                <TableHead>SERVIÇO</TableHead>
+                <TableHead>CATEGORIA</TableHead>
+                <TableHead className="hidden md:table-cell">TEMPO</TableHead>
+                <TableHead>PREÇO</TableHead>
                 <TableHead className="w-20"></TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {servicos.map((s) => (
                 <TableRow key={s.id}>
-                  <TableCell className="font-medium">{s.nome}</TableCell>
+                  {/* Nome transformado em botão clicável */}
+                  <TableCell>
+                    <button
+                      onClick={() => handleOpenDetails(s)}
+                      className="text-left font-medium text-zinc-700 hover:text-black hover: transition-all cursor-pointer"
+                    >
+                      {s.nome}
+                    </button>
+                  </TableCell>
                   <TableCell>
                     <Badge variant="outline">{s.categoria}</Badge>
                   </TableCell>
@@ -155,13 +180,21 @@ export default function ServicosPage() {
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
                         <DropdownMenuLabel>Ações</DropdownMenuLabel>
+
+                        {/* Nova opção: Ver Detalhes */}
+                        <DropdownMenuItem onClick={() => handleOpenDetails(s)}>
+                          <Eye className="mr-2 size-4 text-zinc-500" /> Ver
+                          detalhes
+                        </DropdownMenuItem>
+
                         <DropdownMenuItem
                           onClick={() => {
                             setServiceToEdit(s);
                             setIsEditOpen(true);
                           }}
                         >
-                          <Pencil className="mr-2 size-4" /> Editar
+                          <Pencil className="mr-2 size-4 text-zinc-500" />{" "}
+                          Editar
                         </DropdownMenuItem>
                         <DropdownMenuItem
                           className="text-red-600"
@@ -209,6 +242,13 @@ export default function ServicosPage() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Componente Modal de Detalhes Inserido Aqui */}
+      <ServiceDetailsDialog
+        servico={servicoSelecionado}
+        open={isDetailsOpen}
+        onOpenChange={setIsDetailsOpen}
+      />
     </div>
   );
 }
