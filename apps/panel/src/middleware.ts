@@ -1,8 +1,3 @@
-// Polyfill de segurança para o Edge Runtime da Cloudflare
-if (typeof process === "undefined") {
-  (globalThis as any).process = { env: {} };
-}
-
 import { NextResponse, type NextRequest } from "next/server";
 
 export function middleware(request: NextRequest) {
