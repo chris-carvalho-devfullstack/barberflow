@@ -6,9 +6,10 @@ const monorepoRoot = path.resolve(__dirname, "../..");
 const nextConfig: NextConfig = {
   output: "standalone",
   outputFileTracingRoot: monorepoRoot,
-  turbopack: {
-    root: monorepoRoot,
-  },
+  // Remova ou comente o bloco abaixo:
+  // turbopack: {
+  //   root: monorepoRoot,
+  // },
   images: {
     remotePatterns: [
       {
