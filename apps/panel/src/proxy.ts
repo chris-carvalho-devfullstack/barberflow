@@ -1,7 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 
-export function middleware(request: NextRequest) {
-  // Repassando o request para o next() para o ESLint e TypeScript não bloquearem o build
+export function proxy(request: NextRequest) {
   return NextResponse.next({
     request: request,
   });
