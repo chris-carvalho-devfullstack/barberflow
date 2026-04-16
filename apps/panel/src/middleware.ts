@@ -1,7 +1,9 @@
-// apps/panel/src/middleware.ts
-import { NextResponse, type NextRequest } from "next/server";
+// Polyfill de segurança para o Edge Runtime da Cloudflare
+if (typeof process === "undefined") {
+  (globalThis as any).process = { env: {} };
+}
 
-// No Next 15, podemos voltar a usar o runtime edge sem problemas
+import { NextResponse, type NextRequest } from "next/server";
 
 export function middleware(request: NextRequest) {
   return NextResponse.next({
