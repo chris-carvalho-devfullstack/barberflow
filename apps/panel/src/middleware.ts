@@ -1,7 +1,9 @@
+// apps/panel/src/middleware.ts
 import { NextResponse, type NextRequest } from "next/server";
 
-// Mude de 'export function middleware' para 'export function proxy'
-export function proxy(request: NextRequest) {
+// No Next 15, podemos voltar a usar o runtime edge sem problemas
+
+export function middleware(request: NextRequest) {
   return NextResponse.next({
     request: request,
   });
