@@ -7,7 +7,7 @@
     "build": "next build && (cp -r .next/standalone/apps/panel/. .next/standalone/ || true)",
     "start": "next start",
     "lint": "eslint",
-    "worker:build": "npx @opennextjs/cloudflare build && mkdir -p .open-next/assets/_worker.js && cp -rL .open-next/worker.js .open-next/server-functions .open-next/cloudflare .open-next/.build .open-next/assets/_worker.js/ && (cp -rL .open-next/middleware .open-next/assets/_worker.js/ 2>/dev/null || true) && mv .open-next/assets/_worker.js/worker.js .open-next/assets/_worker.js/index.js"
+    "worker:build": "npx @opennextjs/cloudflare@latest build && mkdir -p .open-next/assets/_worker.js && cp -rL .open-next/worker.js .open-next/server-functions .open-next/cloudflare .open-next/.build .open-next/assets/_worker.js/ && (cp -rL .open-next/middleware .open-next/assets/_worker.js/ 2>/dev/null || true) && mv .open-next/assets/_worker.js/worker.js .open-next/assets/_worker.js/index.js"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
@@ -34,7 +34,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.5",
-    "@opennextjs/cloudflare": "1.0.0",
+    "@opennextjs/cloudflare": "^1.6.0",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
