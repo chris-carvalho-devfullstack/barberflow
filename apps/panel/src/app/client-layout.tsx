@@ -9,6 +9,7 @@ import {
 import { AppSidebar } from "@/components/app-sidebar";
 import { Separator } from "@/components/ui/separator";
 import { UserNav } from "@/components/user-nav";
+import { Toaster } from "@/components/ui/sonner"; // <--- Toaster importado AQUI
 
 export function ClientLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -18,24 +19,29 @@ export function ClientLayout({ children }: { children: React.ReactNode }) {
     pathname === "/cadastro" ||
     pathname.startsWith("/auth");
 
-  if (isPublicRoute) {
-    return <main>{children}</main>;
-  }
-
   return (
-    <SidebarProvider>
-      <AppSidebar />
-      <SidebarInset>
-        <header className="flex h-14 shrink-0 items-center justify-between border-b px-4">
-          <div className="flex items-center gap-2">
-            <SidebarTrigger className="-ml-1" />
-            <Separator orientation="vertical" className="mr-2 h-4" />
-            <h1 className="text-sm font-medium">Painel Administrativo</h1>
-          </div>
-          <UserNav />
-        </header>
-        <div className="p-6">{children}</div>
-      </SidebarInset>
-    </SidebarProvider>
+    <>
+      {isPublicRoute ? (
+        <main>{children}</main>
+      ) : (
+        <SidebarProvider>
+          <AppSidebar />
+          <SidebarInset>
+            <header className="flex h-14 shrink-0 items-center justify-between border-b px-4">
+              <div className="flex items-center gap-2">
+                <SidebarTrigger className="-ml-1" />
+                <Separator orientation="vertical" className="mr-2 h-4" />
+                <h1 className="text-sm font-medium">Painel Administrativo</h1>
+              </div>
+              <UserNav />
+            </header>
+            <div className="p-6">{children}</div>
+          </SidebarInset>
+        </SidebarProvider>
+      )}
+      
+      {/* O Toaster é renderizado aqui, 100% seguro no Client Component */}
+      <Toaster position="top-right" richColors /> 
+    </>
   );
 }
