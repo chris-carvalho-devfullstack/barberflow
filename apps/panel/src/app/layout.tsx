@@ -1,18 +1,8 @@
-"use client";
-
-import { UserNav } from "@/components/user-nav";
+import type { Metadata } from "next";
 import { Toaster } from "@/components/ui/sonner";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { usePathname } from "next/navigation";
-
-import {
-  SidebarProvider,
-  SidebarTrigger,
-  SidebarInset,
-} from "@/components/ui/sidebar";
-import { AppSidebar } from "@/components/app-sidebar";
-import { Separator } from "@/components/ui/separator";
+import { ClientLayout } from "./client-layout";
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 const geistMono = Geist_Mono({
@@ -20,43 +10,18 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+export const metadata: Metadata = {
+  title: "BarberFlow",
+  description: "Painel Administrativo",
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-  const pathname = usePathname();
-
-  // Define as rotas que NÃO devem exibir a Sidebar (Login, Cadastro, etc)
-  const isPublicRoute =
-    pathname === "/login" ||
-    pathname === "/cadastro" ||
-    pathname.startsWith("/auth");
-
   return (
     <html lang="pt-BR">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        {isPublicRoute ? (
-          // Layout limpo para Login/Cadastro
-          <main>{children}</main>
-        ) : (
-          // Layout com Sidebar para o Painel Administrativo
-          <SidebarProvider>
-            <AppSidebar />
-            <SidebarInset>
-              <header className="flex h-14 shrink-0 items-center justify-between border-b px-4">
-                <div className="flex items-center gap-2">
-                  <SidebarTrigger className="-ml-1" />
-                  <Separator orientation="vertical" className="mr-2 h-4" />
-                  <h1 className="text-sm font-medium">Painel Administrativo</h1>
-                </div>
-                {/* Aqui entra o nosso novo menu de perfil */}
-                <UserNav />
-              </header>
-              <div className="p-6">{children}</div>
-            </SidebarInset>
-          </SidebarProvider>
-        )}
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        <ClientLayout>{children}</ClientLayout>
         <Toaster position="top-right" richColors />
       </body>
     </html>
